@@ -145,6 +145,10 @@ body {
     height: 30px;
 }
 
+.close ,.mobile__nav{
+    display: none;
+}
+
 
 @media screen and (max-width: 830px){
     .sidebar {
@@ -157,6 +161,10 @@ body {
         width: 100%;
         transition: 0.4s;
         transform: translateY(100%);
+    }
+
+    .close ,.mobile__nav{
+        display: block;
     }
 
     .sidebar.active {
