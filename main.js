@@ -42,8 +42,7 @@ function updateTotal() {
                                   ${total} USD 
                               </div>
                               <div class="hide uah">
-                                  ${converted} 
-                                  UAH
+                                  ${converted} UAH
                               </div>
                       </div>`;
 }
