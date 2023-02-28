@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Мониторинг заказов</title>
+    <link rel="stylesheet" href="main.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;1,500;1,600&family=Unbounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+
+    <style>
+         .progress-bar {
+            width: 200px;
+            height: 200px;
+            position: relative;
+        }
+
+        .progress-bar span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .progress-bar .circle {
+            fill: transparent;
+            stroke: #ddd;
+            stroke-width: 20;
+        }
+
+        .progress-bar .arc {
+            fill: transparent;
+            stroke: #007bff;
+            stroke-width: 20;
+            stroke-linecap: round;
+            transform-origin: 50% 50%;
+            transform: rotate(-90deg);
+        }
+    </style>
+    <div class="container">
+        <div class="main">
+            <div class="sidebar">
+                <ul class="nav__list">
+                    <li class="nav__list-items">
+                        <a href="./index.html" class="nav__list-item-link">
+                            Заказы
+                        </a>
+                    </li>
+                    <li class="nav__list-items">
+                        <a href="" class="nav__list-item-link">
+                            Список дел (скоро)
+                        </a>
+                    </li>
+                    <li class="nav__list-items">
+                        <a href="" class="nav__list-item-link">
+                            Блокнот (скоро)
+                        </a>
+                    </li>
+                    <li class="nav__list-items">
+                        <a href="" class="nav__list-item-link">
+                            Статистика (скоро)
+                        </a>
+                    </li>
+                    <li class="nav__list-items">
+                        <a href="./mustang.html" class="nav__list-item-link">
+                            Осталось на мустанг 
+                        </a>
+                    </li>
+                    <li class="nav__list-items">
+                        <a href="" class="nav__list-item-link">
+                            Конвертер в Base64 (скоро)
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="content">
+                <div class="title">
+                    <h1>На Mustang</h1>
+                </div>
+                <div class="container">
+                    
+                    <input type="number" placeholder="" id="input-amount">
+                    <button id="btn-add">Добавить</button>
+                    <div class="progress-bar">
+                      <svg viewBox="0 0 100 100">
+                        <circle class="circle" cx="50" cy="50" r="40"/>
+                        <circle class="arc" cx="50" cy="50" r="40"/>
+                      </svg>
+                      <span id="progress-text">0%</span>
+                    </div>
+                    <p>Всего принято пожертвований: <span id="total-amount">0</span></p>
+                  </div>
+                <div id="cards"></div>
+            </div>
+        </div>  
+    </div>
+
+    <script>
+        const inputAmount = document.getElementById('input-amount');
+        const btnAdd = document.getElementById('btn-add');
+        const progressBar = document.querySelector('.progress-bar');
+        const progressArc = progressBar.querySelector('.arc');
+        const progressText = progressBar.querySelector('#progress-text');
+        const totalAmount = document.getElementById('total-amount');
+
+        let currentAmount = parseFloat(localStorage.getItem('totalAmount')) || 0;
+        let currentProgress = parseFloat(localStorage.getItem('progress')) || 0;
+
+        updateTotalAmount(currentAmount);
+        updateProgressBar(currentProgress);
+
+        btnAdd.addEventListener('click', () => {
+            const newAmount = parseFloat(inputAmount.value) || 0;
+            currentAmount += newAmount;
+            localStorage.setItem('totalAmount', currentAmount);
+            updateTotalAmount(currentAmount);
+
+            const maxAmount = 10000;
+            const progress = Math.min(currentAmount / maxAmount, 1);
+            const animationDuration = 500;
+            animateProgressBar(currentProgress, progress, animationDuration, progressArc);
+
+            currentProgress = progress;
+            localStorage.setItem('progress', currentProgress);
+        });
+
+        function updateTotalAmount(amount) {
+            totalAmount.textContent = `${amount.toFixed(2)} USD`;
+        }
+
+        function animateProgressBar(from, to, duration, arc) {
+            let start = null;
+            const progress = Math.min(to - from, 1);
+            const maxAngle = progress * 360;
+            function step(timestamp) {
+                if (!start) start = timestamp;
+                const elapsed = timestamp - start;
+                const angle = (elapsed / duration) * maxAngle;
+                arc.style.transform = `rotate(${from + angle}deg)`;
+                progressText.textContent = `${Math.round((from + angle) / 360 * 100)}%`;
+
+                if (elapsed < duration) {
+                    window.requestAnimationFrame(step);
+                }
+            }
+            window.requestAnimationFrame(step);
+        }
+
+        function updateProgressBar(progress) {
+            const maxAmount = 10000;
+            const progressAngle = progress * 360;
+            progressArc.style.transform = `rotate(${progressAngle}deg)`;
+            progressText.textContent = `${Math.round(progress * 100)}%`;
+
+            const green = '#47a447';
+            const yellow = '#ffc107';
+            const red = '#d9534f';
+            let color;
+            if (progress >= 0.7) {
+                color = red;
+            } else if (progress >= 0.3) {
+                color = yellow;
+            } else {
+                color = green;
+            }
+            progressArc.style.stroke = color;
+        }
+    </script>
+  </body>
+</html>
