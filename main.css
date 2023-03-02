@@ -25,6 +25,20 @@ body {
     background-color: var(--main);
     padding: 20px;
     border-radius: 8px;
+    overflow: hidden;
+
+}
+
+.total::after {
+    right: 0;
+    top: 0;
+    content: '';
+    opacity: 0.4;
+    width: 220px;
+    height: 120px;
+    position: absolute;
+    background-image: url(./assets/Icon/Meliuk-liuk.svg);
+    background-position: right;
 }
 
 .card {
@@ -173,8 +187,12 @@ body {
     }
 
     .total {
-        position: static;
+        position: relative;
         margin: 0;
+    }
+
+    .total::after {
+        width: 250px;
     }
 
     .content {
